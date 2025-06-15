@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import { GlowingCard } from '@/components/ui/GlowingCard';
+import { StarBorder } from '@/components/ui/star-border';
 import { 
   GitBranch, 
   Upload, 
@@ -306,22 +307,24 @@ const DeployPage = () => {
                       />
                     </div>
 
-                    <motion.button
-                      type="submit"
-                      disabled={isLoading}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="w-full flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/50 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-300"
-                    >
-                      {isLoading ? (
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      ) : (
-                        <>
-                          <Rocket className="h-5 w-5" />
-                          <span>Deploy from Git</span>
-                        </>
-                      )}
-                    </motion.button>
+                    <StarBorder as="div">
+                      <motion.button
+                        type="submit"
+                        disabled={isLoading}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="w-full flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/50 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-300"
+                      >
+                        {isLoading ? (
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <>
+                            <Rocket className="h-5 w-5" />
+                            <span>Deploy from Git</span>
+                          </>
+                        )}
+                      </motion.button>
+                    </StarBorder>
                   </form>
                 ) : (
                   <form onSubmit={handleZipSubmit} className="space-y-6">
@@ -379,22 +382,24 @@ const DeployPage = () => {
                       />
                     </div>
 
-                    <motion.button
-                      type="submit"
-                      disabled={isLoading || !zipForm.file}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="w-full flex items-center justify-center space-x-2 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-600/50 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-300"
-                    >
-                      {isLoading ? (
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      ) : (
-                        <>
-                          <Rocket className="h-5 w-5" />
-                          <span>Deploy ZIP File</span>
-                        </>
-                      )}
-                    </motion.button>
+                    <StarBorder as="div">
+                      <motion.button
+                        type="submit"
+                        disabled={isLoading || !zipForm.file}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="w-full flex items-center justify-center space-x-2 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-600/50 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-300"
+                      >
+                        {isLoading ? (
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <>
+                            <Rocket className="h-5 w-5" />
+                            <span>Deploy ZIP File</span>
+                          </>
+                        )}
+                      </motion.button>
+                    </StarBorder>
                   </form>
                 )}
               </div>

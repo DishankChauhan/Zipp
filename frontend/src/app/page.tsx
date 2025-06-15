@@ -11,11 +11,12 @@ import { TestimonialsSection } from '@/components/ui/testimonials-section';
 import { StarBorder } from '@/components/ui/star-border';
 import { TextRotate } from '@/components/ui/text-rotate';
 import { Marquee } from '@/components/ui/marquee';
+import { WorldMap } from '@/components/ui/WorldMap';
 import { 
   Zap, 
   Shield, 
   Rocket, 
-  Globe, 
+  Globe as GlobeIcon, 
   ArrowRight, 
   Github, 
   Upload,
@@ -24,6 +25,7 @@ import {
   CheckCircle,
   ExternalLink
 } from 'lucide-react';
+import Image from 'next/image';
 
 const HomePage = () => {
   const { user } = useAuth();
@@ -45,7 +47,7 @@ const HomePage = () => {
       description: 'Firebase authentication and isolated containers keep your deployments safe.',
     },
     {
-      icon: Globe,
+      icon: GlobeIcon,
       title: 'Public URLs',
       description: 'Get instant public URLs for your deployed sites with SSL certificates.',
     },
@@ -171,49 +173,62 @@ const HomePage = () => {
         <Header />
         
         {/* Hero Section */}
-        <section className="relative overflow-hidden">
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
-            <div className="text-center">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: 'easeOut' }}
-                className="mb-8"
-              >
-                <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-                  Deploy Websites
-                  <br />
-                  <TextRotate
-                    texts={rotatingTexts}
-                    rotationInterval={3000}
-                    staggerDuration={0.05}
-                    staggerFrom="first"
-                    splitBy="characters"
-                    transition={{ 
-                      type: "spring", 
-                      damping: 20, 
-                      stiffness: 200,
-                      duration: 0.6
-                    }}
-                    initial={{ y: "100%", opacity: 0, rotateX: 90 }}
-                    animate={{ y: 0, opacity: 1, rotateX: 0 }}
-                    exit={{ y: "-100%", opacity: 0, rotateX: -90 }}
-                    mainClassName="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent inline-block"
-                    elementLevelClassName="transform-gpu"
-                  />
-                </h1>
-                <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-                  One-click website deployment with Docker containerization. 
-                  Upload your code and get a live URL in seconds.
-                </p>
-              </motion.div>
+        <section className="relative w-full overflow-hidden bg-black pb-10 pt-32 font-light text-white antialiased md:pb-16 md:pt-20">
+          {/* Background Gradients */}
+          <div
+            className="absolute right-0 top-0 h-1/2 w-1/2"
+            style={{
+              background:
+                "radial-gradient(circle at 70% 30%, rgba(59, 130, 246, 0.15) 0%, rgba(0, 0, 0, 0) 60%)",
+            }}
+          />
+          <div
+            className="absolute left-0 top-0 h-1/2 w-1/2 -scale-x-100"
+            style={{
+              background:
+                "radial-gradient(circle at 70% 30%, rgba(59, 130, 246, 0.15) 0%, rgba(0, 0, 0, 0) 60%)",
+            }}
+          />
 
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
-                className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
-              >
+          <div className="container relative z-10 mx-auto max-w-2xl px-4 text-center md:max-w-4xl md:px-6 lg:max-w-7xl">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+            >
+              <div className="inline-flex items-center px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-full text-blue-300 text-sm font-medium mb-6">
+                <span className="mr-2">🚀</span>
+                NEXT GENERATION OF DEPLOYING CODE
+              </div>
+              
+              <h1 className="mx-auto mb-6 max-w-4xl text-4xl font-light md:text-5xl lg:text-7xl">
+                Deploy Websites{' '}
+                <TextRotate
+                  texts={["Instantly", "Effortlessly", "Seamlessly", "Lightning Fast", "In Seconds"]}
+                  rotationInterval={3000}
+                  staggerDuration={0.02}
+                  staggerFrom="first"
+                  splitBy="characters"
+                  transition={{ 
+                    type: "tween", 
+                    duration: 0.4,
+                    ease: "easeInOut"
+                  }}
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -20, opacity: 0 }}
+                  mainClassName="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent inline-block"
+                  elementLevelClassName=""
+                />{' '}
+                with One Click
+              </h1>
+              
+              <p className="mx-auto mb-10 max-w-2xl text-lg text-white/60 md:text-xl">
+                Zipp combines artificial intelligence with cutting-edge deployment strategies to 
+                help you maximize your website deployments with precision and ease.
+              </p>
+
+              <div className="mb-10 sm:mb-0 flex flex-col items-center justify-center gap-4 sm:flex-row">
                 {user ? (
                   <motion.div
                     whileHover={{ scale: 1.05 }}
@@ -246,70 +261,129 @@ const HomePage = () => {
                         className="font-semibold text-lg"
                       >
                         <div className="flex items-center space-x-2">
-                          <span>Get Started Free</span>
+                          <span>Get Started</span>
                           <ArrowRight className="h-5 w-5" />
                         </div>
                       </StarBorder>
                     </motion.div>
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                    <a
+                      href="#features"
+                      className="flex w-full items-center justify-center gap-2 text-white/70 transition-colors hover:text-white sm:w-auto"
                     >
-                      <StarBorder 
-                        as="a" 
-                        href="/auth"
-                        color="#6b7280"
-                        speed="5s"
-                        className="font-semibold text-lg"
+                      <span>Learn how it works</span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       >
-                        Sign In
-                      </StarBorder>
-                    </motion.div>
+                        <path d="m6 9 6 6 6-6"></path>
+                      </svg>
+                    </a>
                   </>
                 )}
-              </motion.div>
+              </div>
+            </motion.div>
 
-              {/* Demo Preview */}
-              <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 0.4, ease: 'easeOut' }}
-                className="relative max-w-4xl mx-auto"
-              >
+            <motion.div
+              className="relative"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
+            >
+              {/* Dashboard Preview */}
+              <div className="relative z-10 mx-auto max-w-5xl overflow-hidden rounded-lg shadow-[0_0_50px_rgba(59,130,246,0.2)]">
                 <GlowingCard>
-                  <div className="bg-black/95 border-2 border-gray-800 rounded-xl shadow-2xl hover:shadow-3xl transition-all duration-500">
-                    <div className="bg-gray-900 rounded-t-xl p-4 flex items-center space-x-2 border-b border-gray-800">
-                      <div className="flex space-x-2">
-                        <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                        <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <div className="bg-black/95 border-2 border-gray-800 rounded-xl shadow-2xl overflow-hidden">
+                    {/* Dashboard Header */}
+                    <div className="bg-gray-900 p-3 flex items-center justify-between border-b border-gray-800">
+                      <div className="flex items-center space-x-2">
+                        <div className="flex space-x-1">
+                          <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                          <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                        </div>
+                        <div className="flex items-center space-x-2 ml-2">
+                          <div className="w-4 h-4 bg-blue-600 rounded flex items-center justify-center">
+                            <svg
+                              className="w-2.5 h-2.5 text-white"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M13 10V3L4 14h7v7l9-11h-7z"
+                              />
+                            </svg>
+                          </div>
+                          <Image
+                            src="/zipp logo.png"
+                            alt="Zipp"
+                            width={60}
+                            height={24}
+                            className="h-6 w-auto"
+                          />
+                        </div>
                       </div>
-                      <div className="text-white text-sm font-mono">zipp.dev</div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                        <span className="text-blue-400 text-sm">Connect</span>
+                      </div>
                     </div>
-                    <div className="p-8">
-                      <div className="text-center">
-                        <Upload className="h-16 w-16 text-blue-400 mx-auto mb-4" />
-                        <p className="text-gray-200 text-lg font-medium">Drop your files here or connect GitHub</p>
-                        <div className="mt-6 flex justify-center space-x-4">
-                          <div className="flex items-center space-x-2 text-sm text-gray-300">
-                            <CheckCircle className="h-4 w-4 text-green-400" />
-                            <span>React</span>
+
+                    {/* Dashboard Content */}
+                    <div className="relative">
+                      <img 
+                        src="/zipp.png" 
+                        alt="Zipp Dashboard" 
+                        className="w-full h-auto border border-white/10"
+                      />
+                      
+                      {/* Overlay Stats */}
+                      <div className="absolute bottom-4 left-4 right-4">
+                        <div className="bg-black/80 backdrop-blur-sm border border-white/10 rounded-lg p-4">
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                            <div>
+                              <div className="text-lg md:text-xl font-bold text-white">$32,485.27</div>
+                              <div className="text-xs text-gray-400">Total Value</div>
+                            </div>
+                            <div>
+                              <div className="text-lg md:text-xl font-bold text-white">$8,942.50</div>
+                              <div className="text-xs text-gray-400">Monthly</div>
+                            </div>
+                            <div>
+                              <div className="text-lg md:text-xl font-bold text-white">12</div>
+                              <div className="text-xs text-gray-400">Projects</div>
+                            </div>
+                            <div>
+                              <div className="text-lg md:text-xl font-bold text-white">$4,280.00</div>
+                              <div className="text-xs text-gray-400">Profit</div>
+                            </div>
                           </div>
-                          <div className="flex items-center space-x-2 text-sm text-gray-300">
-                            <CheckCircle className="h-4 w-4 text-green-400" />
-                            <span>Node.js</span>
-                          </div>
-                          <div className="flex items-center space-x-2 text-sm text-gray-300">
-                            <CheckCircle className="h-4 w-4 text-green-400" />
-                            <span>Python</span>
+                          
+                          <div className="flex space-x-2 mt-4">
+                            <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 px-4 rounded-md transition-colors duration-200">
+                              Deploy Now
+                            </button>
+                            <button className="flex-1 bg-gray-700 hover:bg-gray-600 text-white text-sm py-2 px-4 rounded-md transition-colors duration-200">
+                              View Analytics
+                            </button>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </GlowingCard>
-              </motion.div>
-            </div>
+              </div>
+            </motion.div>
           </div>
         </section>
 

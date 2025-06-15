@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import { GlowingCard } from '@/components/ui/GlowingCard';
+import { StarBorder } from '@/components/ui/star-border';
 import { 
   Plus, 
   Rocket, 
@@ -149,8 +150,7 @@ const DashboardPage = () => {
   };
 
   const handleViewAnalytics = () => {
-    // TODO: Implement analytics page
-    console.log('View Analytics clicked');
+    router.push('/analytics');
   };
 
   const getStatusIcon = (status: string) => {
@@ -311,24 +311,28 @@ const DashboardPage = () => {
           className="mb-8"
         >
           <div className="flex flex-col sm:flex-row gap-4">
-            <motion.button
-              onClick={handleNewDeployment}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-300"
-            >
-              <Plus className="h-5 w-5" />
-              <span>New Deployment</span>
-            </motion.button>
-            <motion.button
-              onClick={handleViewAnalytics}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="flex items-center justify-center space-x-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white px-6 py-3 rounded-lg font-semibold hover:bg-white/20 transition-colors duration-300"
-            >
-              <Activity className="h-5 w-5" />
-              <span>View Analytics</span>
-            </motion.button>
+            <StarBorder as="div">
+              <motion.button
+                onClick={handleNewDeployment}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-300"
+              >
+                <Plus className="h-5 w-5" />
+                <span>New Deployment</span>
+              </motion.button>
+            </StarBorder>
+            <StarBorder as="div">
+              <motion.button
+                onClick={handleViewAnalytics}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center justify-center space-x-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white px-6 py-3 rounded-lg font-semibold hover:bg-white/20 transition-colors duration-300"
+              >
+                <Activity className="h-5 w-5" />
+                <span>View Analytics</span>
+              </motion.button>
+            </StarBorder>
           </div>
         </motion.div>
 

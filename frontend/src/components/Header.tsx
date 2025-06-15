@@ -15,6 +15,8 @@ import {
   Upload,
   FolderOpen
 } from 'lucide-react';
+import Link from 'next/link';
+import Image from 'next/image';
 
 const Header = () => {
   const { user, logout } = useAuth();
@@ -46,22 +48,16 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <motion.a
-            href="/"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex items-center space-x-2 cursor-pointer"
-          >
-            <div className="relative">
-              <Zap className="h-8 w-8 text-blue-400" />
-              <motion.div
-                className="absolute inset-0 bg-blue-400 rounded-full opacity-20"
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              />
-            </div>
-            <span className="text-2xl font-bold text-white">Zipp</span>
-          </motion.a>
+          <Link href="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+            <Image
+              src="/zipp logo.png"
+              alt="Zipp"
+              width={400}
+              height={400}
+              className="h-36 w-auto"
+              priority
+            />
+          </Link>
 
           {/* Desktop Navigation */}
           {user && (

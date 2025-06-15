@@ -1,6 +1,9 @@
 "use client"
 import React, { useEffect, useRef, useState } from "react";
 import { Zap } from "lucide-react";
+import Link from 'next/link';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
 
 interface LinkItem {
   href: string;
@@ -92,15 +95,23 @@ const Footer: React.FC<FooterProps> = ({
       <div className="container mx-auto flex flex-col md:flex-row justify-between w-full gap-6 pb-32 pt-16 px-6">
         <div className="space-y-4">
           <div className="flex items-center space-x-2 mb-6">
-            <Zap className="h-8 w-8 text-blue-400" />
-            <span className="text-2xl font-bold text-white">Zipp</span>
+            <Image
+              src="/zipp logo.png"
+              alt="Zipp"
+              width={360}
+              height={144}
+              className="h-36 w-auto"
+            />
           </div>
           <ul className="flex flex-wrap gap-6">
             {leftLinks.map((link, index) => (
               <li key={index}>
-                <a href={link.href} className="text-gray-300 hover:text-blue-400 transition-colors duration-300 font-medium">
+                <Link
+                  href={link.href}
+                  className="text-gray-300 hover:text-blue-400 transition-colors duration-300 font-medium"
+                >
                   {link.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -112,9 +123,12 @@ const Footer: React.FC<FooterProps> = ({
           <ul className="flex flex-wrap gap-6 justify-start md:justify-end">
             {rightLinks.map((link, index) => (
               <li key={index}>
-                <a href={link.href} className="text-gray-300 hover:text-blue-400 transition-colors duration-300 font-medium">
+                <Link
+                  href={link.href}
+                  className="text-gray-300 hover:text-blue-400 transition-colors duration-300 font-medium"
+                >
                   {link.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
