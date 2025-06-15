@@ -85,7 +85,6 @@ class FirebaseService:
         try:
             deployments = self.db.collection('deployments')\
                                .where('user_id', '==', uid)\
-                               .order_by('created_at', direction=firestore.Query.DESCENDING)\
                                .stream()
             
             result = []
@@ -93,6 +92,9 @@ class FirebaseService:
                 deployment_data = deployment.to_dict()
                 deployment_data['id'] = deployment.id
                 result.append(deployment_data)
+            
+            # Sort by created_at in Python instead of Firestore
+            result.sort(key=lambda x: x.get('created_at', 0), reverse=True)
             
             return result
         except Exception as e:

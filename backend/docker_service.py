@@ -21,6 +21,28 @@ class DockerService:
         self.client = docker.from_env()
         self.used_ports = set()
         self.ensure_directories()
+        self.cleanup_orphaned_ports()
+    
+    def cleanup_orphaned_ports(self):
+        """Clean up any orphaned port reservations on startup"""
+        try:
+            # Get all actually used ports by running containers
+            used_ports = set()
+            containers = self.client.containers.list(all=True)
+            for container in containers:
+                if container.ports:
+                    for port_info in container.ports.values():
+                        if port_info:
+                            for port_mapping in port_info:
+                                if 'HostPort' in port_mapping:
+                                    used_ports.add(int(port_mapping['HostPort']))
+            
+            # Reset our internal tracking to match reality
+            self.used_ports = used_ports.copy()
+            logger.info(f"Cleaned up port tracking. Currently used ports: {self.used_ports}")
+        except Exception as e:
+            logger.warning(f"Could not cleanup orphaned ports: {e}")
+            self.used_ports = set()  # Reset to empty if we can't determine
     
     def ensure_directories(self):
         """Ensure upload and clone directories exist"""
@@ -29,14 +51,41 @@ class DockerService:
     
     def get_available_port(self) -> int:
         """Get an available port for deployment"""
+        # Get all currently used ports by Docker containers
+        used_ports = set()
+        try:
+            containers = self.client.containers.list(all=True)
+            for container in containers:
+                if container.ports:
+                    for port_info in container.ports.values():
+                        if port_info:
+                            for port_mapping in port_info:
+                                if 'HostPort' in port_mapping:
+                                    used_ports.add(int(port_mapping['HostPort']))
+        except Exception as e:
+            logger.warning(f"Could not get Docker port info: {e}")
+        
+        logger.info(f"Docker used ports: {used_ports}")
+        logger.info(f"Internally tracked ports: {self.used_ports}")
+        
+        # Find an available port
         for port in range(settings.DEPLOYMENT_PORT_RANGE_START, settings.DEPLOYMENT_PORT_RANGE_END):
-            if port not in self.used_ports:
-                # Check if port is actually free
+            if port not in used_ports and port not in self.used_ports:
+                # Double-check if port is actually free
                 import socket
                 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                    if s.connect_ex(('localhost', port)) != 0:
+                    result = s.connect_ex(('localhost', port))
+                    if result != 0:  # Port is free
+                        logger.info(f"Selected port {port} for deployment")
                         self.used_ports.add(port)
                         return port
+                    else:
+                        logger.warning(f"Port {port} appears free in Docker but is actually in use")
+        
+        # If we get here, no ports are available
+        logger.error(f"No available ports in range {settings.DEPLOYMENT_PORT_RANGE_START}-{settings.DEPLOYMENT_PORT_RANGE_END}")
+        logger.error(f"Used ports: {used_ports}")
+        logger.error(f"Tracked ports: {self.used_ports}")
         raise Exception("No available ports in the specified range")
     
     def release_port(self, port: int):
@@ -52,14 +101,63 @@ class DockerService:
             clone_path = os.path.join(settings.CLONE_DIR, repo_id)
             
             logs.append(f"Cloning repository: {repo_url}")
-            logs.append(f"Branch: {branch}")
+            logs.append(f"Requested branch: {branch}")
             logs.append(f"Target directory: {clone_path}")
             
-            # Clone the repository
-            repo = Repo.clone_from(repo_url, clone_path, branch=branch, depth=1)
+            # Try to clone with the specified branch first
+            try:
+                repo = Repo.clone_from(repo_url, clone_path, branch=branch, depth=1)
+                logs.append(f"Successfully cloned with branch: {branch}")
+            except Exception as e:
+                # If the specified branch doesn't exist, try common alternatives
+                if "not found" in str(e).lower() or "does not exist" in str(e).lower():
+                    logs.append(f"Branch '{branch}' not found, trying alternatives...")
+                    
+                    # Clean up failed attempt
+                    if os.path.exists(clone_path):
+                        shutil.rmtree(clone_path)
+                    
+                    # Try common branch names
+                    alternative_branches = ["master", "main", "develop", "dev"]
+                    if branch in alternative_branches:
+                        alternative_branches.remove(branch)
+                    else:
+                        alternative_branches = ["master", "main", "develop", "dev"]
+                    
+                    cloned = False
+                    for alt_branch in alternative_branches:
+                        try:
+                            logs.append(f"Trying branch: {alt_branch}")
+                            repo = Repo.clone_from(repo_url, clone_path, branch=alt_branch, depth=1)
+                            logs.append(f"Successfully cloned with branch: {alt_branch}")
+                            cloned = True
+                            break
+                        except Exception as alt_e:
+                            logs.append(f"Branch '{alt_branch}' also failed: {str(alt_e)}")
+                            continue
+                    
+                    if not cloned:
+                        # Last resort: clone without specifying branch (gets default)
+                        try:
+                            logs.append("Trying to clone default branch...")
+                            repo = Repo.clone_from(repo_url, clone_path, depth=1)
+                            logs.append("Successfully cloned default branch")
+                        except Exception as final_e:
+                            error_msg = f"Failed to clone repository with any branch: {str(final_e)}"
+                            logs.append(error_msg)
+                            raise Exception(error_msg)
+                else:
+                    # Different error, re-raise
+                    raise e
             
-            logs.append(f"Successfully cloned repository")
             logs.append(f"Repository size: {self._get_directory_size(clone_path)} MB")
+            
+            # Get the actual branch name that was cloned
+            try:
+                actual_branch = repo.active_branch.name
+                logs.append(f"Cloned branch: {actual_branch}")
+            except:
+                logs.append("Could not determine active branch name")
             
             return clone_path, logs
             
@@ -67,6 +165,14 @@ class DockerService:
             error_msg = f"Failed to clone repository: {str(e)}"
             logs.append(error_msg)
             logger.error(error_msg)
+            
+            # Clean up on failure
+            if 'clone_path' in locals() and os.path.exists(clone_path):
+                try:
+                    shutil.rmtree(clone_path)
+                except:
+                    pass
+            
             raise Exception(error_msg)
     
     async def extract_zip(self, zip_path: str) -> Tuple[str, List[str]]:
@@ -257,9 +363,25 @@ CMD ["nginx", "-g", "daemon off;"]
             
             # Run the container
             logs.append("Starting container...")
+            
+            # Determine which internal port to map based on project type
+            dockerfile_content = ""
+            if os.path.exists(dockerfile_path):
+                with open(dockerfile_path, 'r') as f:
+                    dockerfile_content = f.read()
+            
+            # Determine internal port from Dockerfile
+            internal_port = 80  # Default for nginx
+            if 'EXPOSE 3000' in dockerfile_content:
+                internal_port = 3000
+            elif 'EXPOSE 8000' in dockerfile_content:
+                internal_port = 8000
+            
+            logs.append(f"Mapping internal port {internal_port} to external port {port}")
+            
             container = self.client.containers.run(
                 image_name,
-                ports={'3000/tcp': port, '80/tcp': port, '8000/tcp': port},
+                ports={f'{internal_port}/tcp': port},
                 detach=True,
                 name=f"instantsite_{deployment_name}_{uuid.uuid4().hex[:8]}",
                 remove=False,
