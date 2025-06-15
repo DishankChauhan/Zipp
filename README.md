@@ -1,7 +1,7 @@
 # Zipp: One Click Website Deployer 🚀
 
 
-A modern platform that revolutionizes how developers deploy their websites. With Zipp, you can deploy any website instantly with just one click using Docker containerization - no complex configurations, no deployment headaches, just pure simplicity.
+A modern platform that revolutionizes how developers deploy their websites. With Zipp, you can deploy any website instantly with just one click - no complex configurations, no deployment headaches, just pure simplicity.
 
 ![Zipp Landing Page](frontend/public/Landing.png)
 
