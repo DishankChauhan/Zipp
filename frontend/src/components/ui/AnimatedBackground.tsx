@@ -15,9 +15,9 @@ export function AnimatedBackground({
   children,
   direction = "diagonal",
   speed = 0.5,
-  borderColor = "rgba(255, 255, 255, 0.1)",
-  squareSize = 50,
-  hoverFillColor = "rgba(255, 255, 255, 0.05)",
+  borderColor = "rgba(255, 255, 255, 0.25)",
+  squareSize = 40,
+  hoverFillColor = "rgba(255, 255, 255, 0.08)",
 }: AnimatedBackgroundProps) {
   return (
     <div className="relative min-h-screen bg-black overflow-hidden">
