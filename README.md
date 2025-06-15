@@ -3,7 +3,8 @@
 
 A modern platform that revolutionizes how developers deploy their websites. With Zipp, you can deploy any website instantly with just one click - no complex configurations, no deployment headaches, just pure simplicity.
 
-![Zipp Landing Page](frontend/public/Landing.png)
+
+![Landing](https://github.com/user-attachments/assets/63dd1755-3293-4d44-b577-9cc316660c6e)
 
 ## 🎯 The Problem I'm Solving
 
